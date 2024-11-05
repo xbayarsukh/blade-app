@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "440874907111",
+    "project_id": "blade-260d6",
+    "storage_bucket": "blade-260d6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:440874907111:android:6c0a3d6cf65ad74f01b942",
+        "android_client_info": {
+          "package_name": "mn.sukhee.blade"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDz69KNw-zycc-6xQ2xbMo8qLV8_Ng2-yI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

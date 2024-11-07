@@ -6,6 +6,7 @@ import 'package:blade/configs/globals.dart';
 import 'package:blade/models/login_response.dart';
 import 'package:blade/repositories/auth_repositories.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:styled_widget/styled_widget.dart';
@@ -28,6 +29,12 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
 
     initial();
+  }
+
+  void _logError(String message, dynamic error) {
+    if (kDebugMode) {
+      print('$message: $error');
+    }
   }
 
   initial() async {
@@ -65,7 +72,11 @@ class _SplashScreenState extends State<SplashScreen> {
           await AppDatabase().saveUser(response.user!);
         }
       }
-      await ConfigNotification().initialize();
+      try {
+        await ConfigNotification().initialise();
+      } catch (e) {
+        _logError('Error initializing notifications', e);
+      }
       await Future.delayed(const Duration(seconds: 1)).then((onValue) {
         Get.offAllNamed("/home");
       });

@@ -56,18 +56,6 @@ class AppTheme {
       surfaceTintColor: Colors.transparent,
     ),
     dividerTheme: DividerThemeData(color: gray.withOpacity(.75)),
-    textButtonTheme: TextButtonThemeData(
-      style: TextButton.styleFrom(
-        foregroundColor: light,
-        backgroundColor: primary,
-        minimumSize: const Size(double.infinity, 52),
-        shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
-        elevation: 0,
-        disabledForegroundColor: lightGray,
-        disabledBackgroundColor: gray.withOpacity(.75),
-      ),
-    ),
     textTheme: _lightTheme,
     iconTheme: const IconThemeData(
       color: bg,
@@ -108,18 +96,6 @@ class AppTheme {
       inversePrimary: dark,
     ),
     dividerTheme: DividerThemeData(color: gray.withOpacity(.75)),
-    textButtonTheme: TextButtonThemeData(
-      style: TextButton.styleFrom(
-        foregroundColor: light,
-        backgroundColor: primary,
-        minimumSize: const Size(double.infinity, 52),
-        shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
-        elevation: 0,
-        disabledForegroundColor: lightGray,
-        disabledBackgroundColor: gray.withOpacity(.75),
-      ),
-    ),
     textTheme: _darkTheme,
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(

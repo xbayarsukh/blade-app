@@ -4,6 +4,8 @@ import 'package:blade/configs/app_database.dart';
 import 'package:blade/configs/config_notification.dart';
 import 'package:blade/configs/globals.dart';
 import 'package:blade/models/login_response.dart';
+import 'package:blade/models/response_model.dart';
+import 'package:blade/repositories/about_repositories.dart';
 import 'package:blade/repositories/auth_repositories.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
@@ -27,7 +29,6 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-
     initial();
   }
 
@@ -38,6 +39,10 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   initial() async {
+    ResponseModel responseModel = await AboutRepositories().isImage();
+    if (responseModel.status == 200 && responseModel.success == true) {
+      isImage = responseModel.data;
+    }
     usr = AppDatabase().getUser();
     tkn = AppDatabase().getAccessToken();
     final List<ConnectivityResult> connectivityResult =

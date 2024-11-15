@@ -90,9 +90,7 @@ class HomeController extends GetxController {
     }
   }
 
-  goDetail(id) {
-    Get.toNamed("/manga-detail", arguments: [id]);
-  }
+  
 
   @override
   void onInit() {

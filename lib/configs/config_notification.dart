@@ -117,7 +117,7 @@ class ConfigNotification {
         notification.hashCode,
         notification.title,
         notification.body,
-        NotificationDetails(
+        const NotificationDetails(
           android: AndroidNotificationDetails(
             'high_importance_channel',
             'High Importance Notifications',
@@ -135,5 +135,5 @@ class ConfigNotification {
 
 Future<void> _firebaseMessagingBackgroundHandler(
     RemoteMessage remoteMessage) async {
-  log('background handler FCM data ::: ${remoteMessage}');
+  log('background handler FCM data ::: $remoteMessage');
 }

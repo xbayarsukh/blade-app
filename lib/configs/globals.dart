@@ -5,3 +5,4 @@ String deviceId = "";
 User? usr;
 String? tkn;
 GetConnect? connect;
+int isImage = 1;

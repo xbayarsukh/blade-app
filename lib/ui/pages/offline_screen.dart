@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:blade/configs/theme/theme.dart';
 import 'package:blade/ui/pages/home/child/download/download_child_screen.dart';
@@ -46,15 +47,21 @@ class _OfflineScreenState extends State<OfflineScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: AppTheme.dark,
-        title: const Text(
-          "Татсан файл",
-          textAlign: TextAlign.center,
-        ),
-      ),
-      body: const DownloadChildScreen(),
+      appBar: Platform.isIOS
+          ? null
+          : AppBar(
+              automaticallyImplyLeading: false,
+              backgroundColor: AppTheme.dark,
+              title: const Text(
+                "Татсан файл",
+                textAlign: TextAlign.center,
+              ),
+            ),
+      body: Platform.isIOS
+          ? const Center(
+              child: Text("Интернет холболтоо шалгана уу."),
+            )
+          : const DownloadChildScreen(),
     );
   }
 }

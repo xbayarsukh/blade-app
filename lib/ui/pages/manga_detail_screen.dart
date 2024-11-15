@@ -1,6 +1,7 @@
 // ignore_for_file: dead_code
 
 import 'dart:convert';
+import 'dart:io';
 import 'package:blade/configs/app_database.dart';
 import 'package:blade/configs/globals.dart';
 import 'package:blade/configs/theme/theme.dart';
@@ -101,14 +102,15 @@ class _MangaDetailScreenState extends State<MangaDetailScreen> {
                 )
               : Stack(
                   children: [
-                    Image.memory(
-                      base64Decode(
-                          mangaController.selectedManga.value.image ?? ""),
-                      height: 700,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                      gaplessPlayback: true,
-                    ),
+                    if (isImage == 1)
+                      Image.memory(
+                        base64Decode(
+                            mangaController.selectedManga.value.image ?? ""),
+                        height: 700,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                        gaplessPlayback: true,
+                      ),
                     Positioned(
                       bottom: 0,
                       child: SizedBox(
@@ -499,196 +501,203 @@ class _MangaDetailScreenState extends State<MangaDetailScreen> {
                                     color: AppTheme.bg,
                                   ),
                                   Expanded(
-                                    child:
-                                        mangaController.selectedManga.value
-                                                .chapters!.isEmpty
-                                            ? const Center(
-                                                child: Text(
-                                                    "Бүлэг нэмэгдээгүй байна"),
-                                              )
-                                            : ListView.builder(
-                                                itemCount: mangaController
-                                                        .selectedManga
-                                                        .value
-                                                        .chapters
-                                                        ?.length ??
-                                                    0,
-                                                shrinkWrap: true,
-                                                padding: const EdgeInsets.only(
-                                                    top: 0, bottom: 60),
-                                                itemBuilder: (context, index) {
-                                                  mangaController
-                                                      .isDownloadLoading
-                                                      .add(false);
+                                    child: mangaController.selectedManga.value
+                                            .chapters!.isEmpty
+                                        ? const Center(
+                                            child:
+                                                Text("Бүлэг нэмэгдээгүй байна"),
+                                          )
+                                        : ListView.builder(
+                                            itemCount: mangaController
+                                                    .selectedManga
+                                                    .value
+                                                    .chapters
+                                                    ?.length ??
+                                                0,
+                                            shrinkWrap: true,
+                                            padding: const EdgeInsets.only(
+                                                top: 0, bottom: 60),
+                                            itemBuilder: (context, index) {
+                                              mangaController.isDownloadLoading
+                                                  .add(false);
 
-                                                  return GestureDetector(
-                                                    onTap: () {
-                                                      if (!AppDatabase()
-                                                          .isLoggedIn()) {
-                                                        Get.snackbar("Алдаа",
-                                                            "Нэвтэрсэний дараа унших боломжтой");
-                                                        Get.offAllNamed("/home",
-                                                            arguments: [3]);
-                                                      } else {
-                                                        if (mangaController
-                                                                .selectedManga
-                                                                .value
-                                                                .type ==
-                                                            "premium") {
-                                                          if ((usr?.mDays ??
-                                                                      0) >
-                                                                  0 &&
-                                                              (usr?.pDays ??
-                                                                      0) >
-                                                                  0) {
-                                                            Get.toNamed(
-                                                                "/chapter-detail",
-                                                                arguments: [
-                                                                  mangaController
-                                                                          .selectedManga
-                                                                          .value
-                                                                          .chapters?[
-                                                                              index]
-                                                                          .id ??
-                                                                      0
-                                                                ]);
-                                                            mangaController
-                                                                .setChapterIndex(
-                                                                    index);
-                                                            mangaController
-                                                                .lastChapterId
-                                                                .value = mangaController
-                                                                    .selectedManga
-                                                                    .value
-                                                                    .chapters?[
-                                                                        index]
-                                                                    .id ??
-                                                                0;
-                                                            mangaController
-                                                                .lastChapterIndex
-                                                                .value = index;
-                                                          } else {
-                                                            Get.snackbar(
-                                                                "Алдаа",
-                                                                "Premium эрхээ сунгаж байж унших боломжтой");
-                                                            Get.offAllNamed(
-                                                                "/home",
-                                                                arguments: [3]);
-                                                          }
-                                                        } else {
-                                                          if ((usr?.mDays ??
-                                                                  0) >
+                                              return GestureDetector(
+                                                onTap: () {
+                                                  if (!AppDatabase()
+                                                      .isLoggedIn()) {
+                                                    Get.snackbar("Алдаа",
+                                                        "Нэвтэрсэний дараа унших боломжтой");
+                                                    Get.offAllNamed("/home",
+                                                        arguments: [
+                                                          Platform.isIOS ? 2 : 3
+                                                        ]);
+                                                  } else {
+                                                    if (mangaController
+                                                            .selectedManga
+                                                            .value
+                                                            .type ==
+                                                        "premium") {
+                                                      if ((usr?.mDays ?? 0) >
+                                                              0 &&
+                                                          (usr?.pDays ?? 0) >
                                                               0) {
-                                                            Get.toNamed(
-                                                                "/chapter-detail",
-                                                                arguments: [
-                                                                  mangaController
-                                                                          .selectedManga
-                                                                          .value
-                                                                          .chapters?[
-                                                                              index]
-                                                                          .id ??
-                                                                      0
-                                                                ]);
-                                                            mangaController
+                                                        Get.toNamed(
+                                                            "/chapter-detail",
+                                                            arguments: [
+                                                              mangaController
+                                                                      .selectedManga
+                                                                      .value
+                                                                      .chapters?[
+                                                                          index]
+                                                                      .id ??
+                                                                  0
+                                                            ]);
+                                                        mangaController
+                                                            .setChapterIndex(
+                                                                index);
+                                                        mangaController
                                                                 .lastChapterId
-                                                                .value = mangaController
+                                                                .value =
+                                                            mangaController
                                                                     .selectedManga
                                                                     .value
                                                                     .chapters?[
                                                                         index]
                                                                     .id ??
                                                                 0;
-                                                            mangaController
-                                                                .lastChapterIndex
-                                                                .value = index;
-                                                            mangaController
-                                                                .setChapterIndex(
-                                                                    index);
-                                                          } else {
-                                                            Get.snackbar(
-                                                                "Алдаа",
-                                                                "Эрхээ сунгаж байж унших боломжтой");
-                                                            Get.offAllNamed(
-                                                                "/home",
-                                                                arguments: [3]);
-                                                          }
-                                                        }
+                                                        mangaController
+                                                            .lastChapterIndex
+                                                            .value = index;
+                                                      } else {
+                                                        Get.snackbar("Алдаа",
+                                                            "Premium эрхээ сунгаж байж унших боломжтой");
+                                                        Get.offAllNamed("/home",
+                                                            arguments: [
+                                                              Platform.isIOS
+                                                                  ? 2
+                                                                  : 3
+                                                            ]);
                                                       }
-                                                    },
-                                                    child: Container(
-                                                      height: 100,
-                                                      width: Get.width - 20,
-                                                      margin:
-                                                          const EdgeInsets.only(
-                                                              top: 10),
-                                                      child: Row(
-                                                        children: [
-                                                          Image.memory(
-                                                            base64Decode(mangaController
+                                                    } else {
+                                                      if ((usr?.mDays ?? 0) >
+                                                          0) {
+                                                        Get.toNamed(
+                                                            "/chapter-detail",
+                                                            arguments: [
+                                                              mangaController
+                                                                      .selectedManga
+                                                                      .value
+                                                                      .chapters?[
+                                                                          index]
+                                                                      .id ??
+                                                                  0
+                                                            ]);
+                                                        mangaController
+                                                                .lastChapterId
+                                                                .value =
+                                                            mangaController
                                                                     .selectedManga
                                                                     .value
                                                                     .chapters?[
                                                                         index]
-                                                                    .image ??
-                                                                ""),
-                                                            height: 100,
-                                                            width: 100,
-                                                            fit: BoxFit.cover,
-                                                            gaplessPlayback:
-                                                                true,
-                                                          ).padding(right: 10),
-                                                          SizedBox(
-                                                            width:
-                                                                Get.width - 140,
-                                                            child: Column(
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .start,
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .spaceAround,
-                                                              children: [
-                                                                Text(
-                                                                  mangaController
-                                                                          .selectedManga
-                                                                          .value
-                                                                          .chapters?[
-                                                                              index]
-                                                                          .title ??
-                                                                      "",
-                                                                  maxLines: 2,
-                                                                  overflow:
-                                                                      TextOverflow
-                                                                          .ellipsis,
-                                                                ),
-                                                                if ((mangaController.downloadStatusList[index] ==
-                                                                            false &&
-                                                                        AppDatabase()
-                                                                            .isLoggedIn()) &&
-                                                                    (usr?.mDays ??
-                                                                            0) >
-                                                                        0) ...[
-                                                                  mangaController
-                                                                              .isDownloadLoading[index] ==
-                                                                          true
-                                                                      ? const CupertinoActivityIndicator()
-                                                                      : GestureDetector(
-                                                                          onTap: () =>
-                                                                              mangaController.downloadChapter(index),
-                                                                          child:
-                                                                              const Icon(Icons.download),
-                                                                        )
-                                                                ],
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  );
+                                                                    .id ??
+                                                                0;
+                                                        mangaController
+                                                            .lastChapterIndex
+                                                            .value = index;
+                                                        mangaController
+                                                            .setChapterIndex(
+                                                                index);
+                                                      } else {
+                                                        Get.snackbar("Алдаа",
+                                                            "Эрхээ сунгаж байж унших боломжтой");
+                                                        Get.offAllNamed("/home",
+                                                            arguments: [
+                                                              Platform.isIOS
+                                                                  ? 2
+                                                                  : 3
+                                                            ]);
+                                                      }
+                                                    }
+                                                  }
                                                 },
-                                              ),
+                                                child: Container(
+                                                  height: 100,
+                                                  width: Get.width - 20,
+                                                  margin: const EdgeInsets.only(
+                                                      top: 10),
+                                                  child: Row(
+                                                    children: [
+                                                      if (isImage == 1)
+                                                        Image.memory(
+                                                          base64Decode(
+                                                              mangaController
+                                                                      .selectedManga
+                                                                      .value
+                                                                      .chapters?[
+                                                                          index]
+                                                                      .image ??
+                                                                  ""),
+                                                          height: 100,
+                                                          width: 100,
+                                                          fit: BoxFit.cover,
+                                                          gaplessPlayback: true,
+                                                        ).padding(right: 10),
+                                                      SizedBox(
+                                                        width: Get.width - 140,
+                                                        child: Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceAround,
+                                                          children: [
+                                                            Text(
+                                                              mangaController
+                                                                      .selectedManga
+                                                                      .value
+                                                                      .chapters?[
+                                                                          index]
+                                                                      .title ??
+                                                                  "",
+                                                              maxLines: 2,
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                            ),
+                                                            if ((mangaController.downloadStatusList[
+                                                                            index] ==
+                                                                        false &&
+                                                                    AppDatabase()
+                                                                        .isLoggedIn() &&
+                                                                    Platform
+                                                                        .isAndroid) &&
+                                                                (usr?.mDays ??
+                                                                        0) >
+                                                                    0) ...[
+                                                              mangaController.isDownloadLoading[
+                                                                          index] ==
+                                                                      true
+                                                                  ? const CupertinoActivityIndicator()
+                                                                  : GestureDetector(
+                                                                      onTap: () =>
+                                                                          mangaController
+                                                                              .downloadChapter(index),
+                                                                      child: const Icon(
+                                                                          Icons
+                                                                              .download),
+                                                                    )
+                                                            ],
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                          ),
                                   )
                                 ],
                               ),

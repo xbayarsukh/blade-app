@@ -77,4 +77,19 @@ class AboutRepositories {
 
     return ResponseModel.fromJson(response.body ?? {});
   }
+
+  Future<ResponseModel> isImage() async {
+    connect ??= GetConnect();
+    String url = "$api/isImage";
+    final response = await connect!.get(
+      url,
+      contentType: 'application/json',
+      headers: {
+        "Content-Type": "application/json",
+        "App-Language": "mn",
+        "Accept": "application/json",
+      },
+    );
+    return ResponseModel.fromJson(response.body ?? {});
+  }
 }

@@ -1,6 +1,7 @@
 class ChapterModel {
   int? id;
   String? title;
+  String? description;
   String? image;
   int? mangaId;
   DateTime? createdAt;
@@ -11,6 +12,7 @@ class ChapterModel {
   ChapterModel({
     this.id,
     this.title,
+    this.description,
     this.image,
     this.mangaId,
     this.createdAt,
@@ -22,6 +24,7 @@ class ChapterModel {
   ChapterModel copyWith({
     int? id,
     String? title,
+    String? description,
     String? image,
     int? mangaId,
     DateTime? createdAt,
@@ -32,6 +35,7 @@ class ChapterModel {
       ChapterModel(
         id: id ?? this.id,
         title: title ?? this.title,
+        description: description ?? this.description,
         image: image ?? this.image,
         mangaId: mangaId ?? this.mangaId,
         createdAt: createdAt ?? this.createdAt,
@@ -44,6 +48,7 @@ class ChapterModel {
       ChapterModel(
         id: json["id"] ?? 0,
         title: json["title"] ?? "",
+        description: json["description"] ?? "",
         image: json["image"] ?? mangaImage,
         mangaId: json["manga_id"] ?? 0,
         createdAt:
@@ -60,6 +65,7 @@ class ChapterModel {
   Map<String, dynamic> toJson() => {
         "id": id,
         "title": title,
+        "description": description,
         "image": image,
         "manga_id": mangaId,
         "created_at": createdAt?.toIso8601String(),

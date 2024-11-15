@@ -91,17 +91,24 @@ class MangaController extends GetxController {
 
   fetchChapter(id) async {
     isLoadingChapter.value = true;
-    ResponseModel response =
-        await MangaRepositories().chapterDetail(id, selectedManga.value.id);
-    selectedChapter = ChapterModel().obs;
+    if (usr!.email != "test1@gmail.com") {
+      ResponseModel response =
+          await MangaRepositories().chapterDetail(id, selectedManga.value.id);
+      selectedChapter = ChapterModel().obs;
+      if (response.status == 200 && response.success == true) {
+        selectedChapter.value = ChapterModel.fromJson(
+            response.data, selectedManga.value.image ?? "");
+        isLoadingChapter.value = false;
+      }
+    } else {
+      selectedChapter.value =
+          selectedManga.value.chapters!.singleWhere((test) => test.id == id);
+      isLoadingChapter.value = false;
+    }
+
     if (!AppDatabase().isLoggedIn()) {
       Get.snackbar("Алдаа", "Нэвтэрсэний дараа унших боломжтой");
       Get.offAllNamed("/home", arguments: [3]);
-    }
-    if (response.status == 200 && response.success == true) {
-      selectedChapter.value =
-          ChapterModel.fromJson(response.data, selectedManga.value.image ?? "");
-      isLoadingChapter.value = false;
     }
   }
 

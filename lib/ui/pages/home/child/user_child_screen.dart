@@ -1,7 +1,6 @@
 import 'package:blade/configs/globals.dart';
 import 'package:blade/configs/theme/theme.dart';
 import 'package:blade/controllers/profile_controller.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -30,9 +29,7 @@ isLogged(ProfileController profileController) {
       children: [
         const CircleAvatar(
           radius: 40,
-          backgroundImage: CachedNetworkImageProvider(
-            "https://banner2.cleanpng.com/20240204/xro/transparent-goku-illustration-of-goku-from-dragon-ball-1710886648944.webp",
-          ),
+          backgroundImage: AssetImage("assets/logo.png"),
         ).padding(vertical: 10),
         Text(
           "${usr?.name} ID: ${usr?.id}",
@@ -157,6 +154,79 @@ isLogged(ProfileController profileController) {
                       ),
                     ),
                     Text("Апп болон багын талаар"),
+                  ],
+                ),
+              ],
+            ),
+          ).padding(horizontal: 20, top: 14),
+        ),
+        GestureDetector(
+          onTap: () {
+            showDialog<void>(
+              context: Get.context!,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: const Text('Бүртгэл устгах'),
+                  content: const Text(
+                      'Таны бүртгэл устгах товч дарсанаас хойш 14 хоногийн дараа устгагдана. 14 хоногооё өмнө орсон тохиолдолд устгагдахгүй болохыг анхаарна уу.'),
+                  backgroundColor: AppTheme.black,
+                  actions: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton(
+                          style: TextButton.styleFrom(
+                            textStyle: Theme.of(context).textTheme.labelLarge,
+                          ),
+                          child: const Text(
+                            'Үгүй',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                        TextButton(
+                          style: TextButton.styleFrom(
+                            textStyle: Theme.of(context).textTheme.labelLarge,
+                          ),
+                          child: const Text(
+                            'Устгах',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          onPressed: () {
+                            profileController.logout();
+                            Get.snackbar('Амжилттай',
+                                'Устгах хүсэлт амжилттай илгээгдлээ.');
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
+                );
+              },
+            );
+          },
+          child: SizedBox(
+            child: Row(
+              children: [
+                const Icon(
+                  CupertinoIcons.trash_fill,
+                  color: AppTheme.bg,
+                  size: 26,
+                ).padding(right: 10),
+                const Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Бүртгэл устгах",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    Text("Апп-д бүртгүүлсэн эрхээ устгах"),
                   ],
                 ),
               ],

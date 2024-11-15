@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:blade/configs/globals.dart';
 import 'package:blade/controllers/home_controller.dart';
@@ -8,6 +9,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:styled_widget/styled_widget.dart';
 
 import '../../../../configs/theme/theme.dart';
@@ -25,288 +27,158 @@ class HomeChildScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (frameController.isSlideManga.value == false &&
-                  frameController.slideMangaList.isNotEmpty) ...[
-                Stack(
-                  children: [
-                    CarouselSlider(
-                      options: CarouselOptions(
-                        height: 200.0,
-                        viewportFraction: 1,
-                        autoPlay: true,
-                        autoPlayInterval: const Duration(seconds: 10),
-                        onPageChanged: (index, reason) {
-                          frameController.setCarouselCurrent(index);
-                        },
-                      ),
-                      carouselController:
-                          frameController.carouselController.value,
-                      items: frameController.slideMangaList.map((i) {
-                        Uint8List slideImage = base64Decode(i.image ?? "");
-                        return Builder(
-                          builder: (BuildContext context) {
-                            return GestureDetector(
-                              onTap: () {
-                                frameController.goDetail(i.mangaId);
-                              },
-                              child: Container(
-                                width: MediaQuery.of(context).size.width,
-                                margin:
-                                    const EdgeInsets.symmetric(horizontal: 5.0),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(8),
-                                  child: Image.memory(
-                                    slideImage, // Uint8List (base64 decoding) байх ёстой
-                                    fit: BoxFit.cover,
-                                    gaplessPlayback:
-                                        true, // Анивчилтаас сэргийлэх
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                        );
-                      }).toList(),
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      left: (Get.width -
-                              ((12 + 8) * frameController.imgList.length)) /
-                          2,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: frameController.imgList
-                            .asMap()
-                            .entries
-                            .map((entry) {
+              if (isImage == 0 && Platform.isIOS) ...[
+                frameController.isNewManga.value
+                    ? const Center(
+                        child: CupertinoActivityIndicator(
+                        color: AppTheme.bg,
+                      ))
+                    : ListView.builder(
+                        itemCount: frameController.newMangaList.length,
+                        shrinkWrap: true,
+                        itemBuilder: (context, index) {
+                          var manga = frameController.newMangaList[index];
                           return GestureDetector(
-                            onTap: () => frameController
-                                .carouselController.value
-                                .animateToPage(entry.key),
+                            onTap: () {
+                              Get.toNamed("/manga-detail",
+                                  arguments: [manga.id]);
+                            },
                             child: Container(
-                              width: 12.0,
-                              height: 12.0,
-                              margin: const EdgeInsets.symmetric(
-                                  vertical: 8.0, horizontal: 4.0),
+                              width: Get.width - 40,
+                              height: 60,
+                              margin:
+                                  const EdgeInsets.only(top: 10, left: 20, right: 20),
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 8, horizontal: 12),
                               decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: (Theme.of(context).brightness ==
-                                            Brightness.dark
-                                        ? Colors.black
-                                        : Colors.white)
-                                    .withOpacity(
-                                        frameController.current.value ==
-                                                entry.key
-                                            ? 0.9
-                                            : 0.4),
+                                color: Colors.grey,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Stack(
+                                children: [
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(manga.title ?? ""),
+                                      Text(
+                                        manga.lastEpisode ?? "",
+                                      ),
+                                    ],
+                                  ),
+                                  Positioned(
+                                    bottom: 0,
+                                    right: 0,
+                                    child: Text(DateFormat('y-M-d HH:MM')
+                                        .format(
+                                            manga.createdAt ?? DateTime.now())),
+                                  )
+                                ],
                               ),
                             ),
                           );
+                        },
+                      )
+              ] else ...[
+                if (frameController.isSlideManga.value == false &&
+                    frameController.slideMangaList.isNotEmpty) ...[
+                  Stack(
+                    children: [
+                      CarouselSlider(
+                        options: CarouselOptions(
+                          height: 200.0,
+                          viewportFraction: 1,
+                          autoPlay: true,
+                          autoPlayInterval: const Duration(seconds: 10),
+                          onPageChanged: (index, reason) {
+                            frameController.setCarouselCurrent(index);
+                          },
+                        ),
+                        carouselController:
+                            frameController.carouselController.value,
+                        items: frameController.slideMangaList.map((i) {
+                          Uint8List slideImage = base64Decode(i.image ?? "");
+                          return Builder(
+                            builder: (BuildContext context) {
+                              return GestureDetector(
+                                onTap: () {
+                                  Get.toNamed("/manga-detail",
+                                      arguments: [i.id]);
+                                },
+                                child: Container(
+                                  width: MediaQuery.of(context).size.width,
+                                  margin: const EdgeInsets.symmetric(
+                                      horizontal: 5.0),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: Image.memory(
+                                      slideImage, // Uint8List (base64 decoding) байх ёстой
+                                      fit: BoxFit.cover,
+                                      gaplessPlayback:
+                                          true, // Анивчилтаас сэргийлэх
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          );
                         }).toList(),
                       ),
-                    ),
-                  ],
-                ),
-              ] else if (frameController.isSlideManga.value == true) ...[
-                const SizedBox(
-                  height: 200,
-                  child: Center(
-                    child: CupertinoActivityIndicator(
-                      color: AppTheme.bg,
-                    ),
+                      Positioned(
+                        bottom: 0,
+                        left: (Get.width -
+                                ((12 + 8) * frameController.imgList.length)) /
+                            2,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: frameController.imgList
+                              .asMap()
+                              .entries
+                              .map((entry) {
+                            return GestureDetector(
+                              onTap: () => frameController
+                                  .carouselController.value
+                                  .animateToPage(entry.key),
+                              child: Container(
+                                width: 12.0,
+                                height: 12.0,
+                                margin: const EdgeInsets.symmetric(
+                                    vertical: 8.0, horizontal: 4.0),
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: (Theme.of(context).brightness ==
+                                              Brightness.dark
+                                          ? Colors.black
+                                          : Colors.white)
+                                      .withOpacity(
+                                          frameController.current.value ==
+                                                  entry.key
+                                              ? 0.9
+                                              : 0.4),
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                    ],
                   ),
-                )
-              ],
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    "Шинээр нэмэгдсэн",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+                ] else if (frameController.isSlideManga.value == true) ...[
+                  const SizedBox(
+                    height: 200,
+                    child: Center(
+                      child: CupertinoActivityIndicator(
+                        color: AppTheme.bg,
+                      ),
                     ),
-                    textAlign: TextAlign.left,
-                  ).padding(left: 20, top: 10),
-                  SizedBox(
-                    height: 180,
-                    child: frameController.isNewManga.value
-                        ? const Center(
-                            child: CupertinoActivityIndicator(
-                            color: AppTheme.bg,
-                          ))
-                        : ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: frameController.newMangaList.length,
-                            itemBuilder: (context, index) {
-                              MangaModel newManga =
-                                  frameController.newMangaList[index];
-                              Uint8List newImage =
-                                  base64Decode(newManga.image ?? "");
-                              return GestureDetector(
-                                onTap: () {
-                                  frameController.goDetail(newManga.id);
-                                },
-                                child: Stack(
-                                  children: [
-                                    Container(
-                                      height: 180,
-                                      width: 130,
-                                      margin: EdgeInsets.only(
-                                        left: index == 0 ? 20 : 10,
-                                        right: (index == 10 - 1) ? 20 : 0,
-                                      ),
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(8),
-                                        child: Image.memory(
-                                          newImage, // Uint8List (base64 decoding) байх ёстой
-                                          fit: BoxFit.cover,
-                                          gaplessPlayback:
-                                              true, // Анивчилтаас сэргийлэх
-                                        ),
-                                      ),
-                                    ),
-                                    Positioned(
-                                      left: index == 0 ? 20 : 10,
-                                      bottom: 0,
-                                      child: Container(
-                                        constraints: const BoxConstraints(
-                                          maxWidth: 130,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: AppTheme.gray,
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                        ),
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 8, vertical: 6),
-                                        child: Text(
-                                          newManga.lastEpisode ?? "",
-                                          maxLines: 1,
-                                        ),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              );
-                            },
-                          ),
-                  ).padding(top: 10)
+                  )
                 ],
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    "Гарч байгаа",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    textAlign: TextAlign.left,
-                  ).padding(left: 20, top: 10),
-                  SizedBox(
-                    height: 180,
-                    child: frameController.isOngoingManga.value
-                        ? const Center(
-                            child: CupertinoActivityIndicator(
-                            color: AppTheme.bg,
-                          ))
-                        : ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: frameController.ongoingMangaList.length,
-                            itemBuilder: (context, index) {
-                              MangaModel ongoingManga =
-                                  frameController.ongoingMangaList[index];
-                              Uint8List ongoingImage =
-                                  base64Decode(ongoingManga.image ?? "");
-                              return GestureDetector(
-                                onTap: () {
-                                  frameController.goDetail(ongoingManga.id);
-                                },
-                                child: Container(
-                                  height: 180,
-                                  width: 130,
-                                  margin: EdgeInsets.only(
-                                    left: index == 0 ? 20 : 10,
-                                    right: (index == 10 - 1) ? 20 : 0,
-                                  ),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(8),
-                                    child: Image.memory(
-                                      ongoingImage, // Uint8List (base64 decoding) байх ёстой
-                                      fit: BoxFit.cover,
-                                      gaplessPlayback:
-                                          true, // Анивчилтаас сэргийлэх
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                  ).padding(top: 10)
-                ],
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    "Гарч дууссан",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    textAlign: TextAlign.left,
-                  ).padding(left: 20, top: 10),
-                  SizedBox(
-                    height: 180,
-                    child: frameController.isFinishManga.value
-                        ? const Center(
-                            child: CupertinoActivityIndicator(
-                            color: AppTheme.bg,
-                          ))
-                        : ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: frameController.finishMangaList.length,
-                            itemBuilder: (context, index) {
-                              MangaModel finishManga =
-                                  frameController.finishMangaList[index];
-                              Uint8List finishImage =
-                                  base64Decode(finishManga.image ?? "");
-                              return GestureDetector(
-                                onTap: () {
-                                  frameController.goDetail(finishManga.id);
-                                },
-                                child: Container(
-                                  height: 180,
-                                  width: 130,
-                                  margin: EdgeInsets.only(
-                                    left: index == 0 ? 20 : 10,
-                                    right: (index == 10 - 1) ? 20 : 0,
-                                  ),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(8),
-                                    child: Image.memory(
-                                      finishImage, // Uint8List (base64 decoding) байх ёстой
-                                      fit: BoxFit.cover,
-                                      gaplessPlayback:
-                                          true, // Анивчилтаас сэргийлэх
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                  ).padding(top: 10)
-                ],
-              ),
-              if (usr != null && (usr?.mDays ?? 0) > 0 && (usr?.pDays ?? 0) > 0)
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      "Premium",
+                      "Шинээр нэмэгдсэн",
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -315,7 +187,86 @@ class HomeChildScreen extends StatelessWidget {
                     ).padding(left: 20, top: 10),
                     SizedBox(
                       height: 180,
-                      child: frameController.isPremiumManga.value
+                      child: frameController.isNewManga.value
+                          ? const Center(
+                              child: CupertinoActivityIndicator(
+                              color: AppTheme.bg,
+                            ))
+                          : ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: frameController.newMangaList.length,
+                              itemBuilder: (context, index) {
+                                MangaModel newManga =
+                                    frameController.newMangaList[index];
+                                Uint8List newImage =
+                                    base64Decode(newManga.image ?? "");
+                                return GestureDetector(
+                                  onTap: () {
+                                    Get.toNamed("/manga-detail",
+                                        arguments: [newManga.id]);
+                                  },
+                                  child: Stack(
+                                    children: [
+                                      Container(
+                                        height: 180,
+                                        width: 130,
+                                        margin: EdgeInsets.only(
+                                          left: index == 0 ? 20 : 10,
+                                          right: (index == 10 - 1) ? 20 : 0,
+                                        ),
+                                        child: ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          child: Image.memory(
+                                            newImage, // Uint8List (base64 decoding) байх ёстой
+                                            fit: BoxFit.cover,
+                                            gaplessPlayback:
+                                                true, // Анивчилтаас сэргийлэх
+                                          ),
+                                        ),
+                                      ),
+                                      Positioned(
+                                        left: index == 0 ? 20 : 10,
+                                        bottom: 0,
+                                        child: Container(
+                                          constraints: const BoxConstraints(
+                                            maxWidth: 130,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: AppTheme.gray,
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                          ),
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 8, vertical: 6),
+                                          child: Text(
+                                            newManga.lastEpisode ?? "",
+                                            maxLines: 1,
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
+                    ).padding(top: 10)
+                  ],
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      "Гарч байгаа",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.left,
+                    ).padding(left: 20, top: 10),
+                    SizedBox(
+                      height: 180,
+                      child: frameController.isOngoingManga.value
                           ? const Center(
                               child: CupertinoActivityIndicator(
                               color: AppTheme.bg,
@@ -323,15 +274,16 @@ class HomeChildScreen extends StatelessWidget {
                           : ListView.builder(
                               scrollDirection: Axis.horizontal,
                               itemCount:
-                                  frameController.premiumMangaList.length,
+                                  frameController.ongoingMangaList.length,
                               itemBuilder: (context, index) {
-                                MangaModel premiumManga =
-                                    frameController.premiumMangaList[index];
-                                Uint8List premiumImage =
-                                    base64Decode(premiumManga.image ?? "");
+                                MangaModel ongoingManga =
+                                    frameController.ongoingMangaList[index];
+                                Uint8List ongoingImage =
+                                    base64Decode(ongoingManga.image ?? "");
                                 return GestureDetector(
                                   onTap: () {
-                                    frameController.goDetail(premiumManga.id);
+                                    Get.toNamed("/manga-detail",
+                                        arguments: [ongoingManga.id]);
                                   },
                                   child: Container(
                                     height: 180,
@@ -343,7 +295,7 @@ class HomeChildScreen extends StatelessWidget {
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(8),
                                       child: Image.memory(
-                                        premiumImage, // Uint8List (base64 decoding) байх ёстой
+                                        ongoingImage, // Uint8List (base64 decoding) байх ёстой
                                         fit: BoxFit.cover,
                                         gaplessPlayback:
                                             true, // Анивчилтаас сэргийлэх
@@ -355,7 +307,120 @@ class HomeChildScreen extends StatelessWidget {
                             ),
                     ).padding(top: 10)
                   ],
-                )
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      "Гарч дууссан",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.left,
+                    ).padding(left: 20, top: 10),
+                    SizedBox(
+                      height: 180,
+                      child: frameController.isFinishManga.value
+                          ? const Center(
+                              child: CupertinoActivityIndicator(
+                              color: AppTheme.bg,
+                            ))
+                          : ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: frameController.finishMangaList.length,
+                              itemBuilder: (context, index) {
+                                MangaModel finishManga =
+                                    frameController.finishMangaList[index];
+                                Uint8List finishImage =
+                                    base64Decode(finishManga.image ?? "");
+                                return GestureDetector(
+                                  onTap: () {
+                                    Get.toNamed("/manga-detail",
+                                        arguments: [finishManga.id]);
+                                  },
+                                  child: Container(
+                                    height: 180,
+                                    width: 130,
+                                    margin: EdgeInsets.only(
+                                      left: index == 0 ? 20 : 10,
+                                      right: (index == 10 - 1) ? 20 : 0,
+                                    ),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(8),
+                                      child: Image.memory(
+                                        finishImage, // Uint8List (base64 decoding) байх ёстой
+                                        fit: BoxFit.cover,
+                                        gaplessPlayback:
+                                            true, // Анивчилтаас сэргийлэх
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                    ).padding(top: 10)
+                  ],
+                ),
+                if (usr != null &&
+                    (usr?.mDays ?? 0) > 0 &&
+                    (usr?.pDays ?? 0) > 0)
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        "Premium",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.left,
+                      ).padding(left: 20, top: 10),
+                      SizedBox(
+                        height: 180,
+                        child: frameController.isPremiumManga.value
+                            ? const Center(
+                                child: CupertinoActivityIndicator(
+                                color: AppTheme.bg,
+                              ))
+                            : ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount:
+                                    frameController.premiumMangaList.length,
+                                itemBuilder: (context, index) {
+                                  MangaModel premiumManga =
+                                      frameController.premiumMangaList[index];
+                                  Uint8List premiumImage =
+                                      base64Decode(premiumManga.image ?? "");
+                                  return GestureDetector(
+                                    onTap: () {
+                                      Get.toNamed("/manga-detail",
+                                          arguments: [premiumManga.id]);
+                                    },
+                                    child: Container(
+                                      height: 180,
+                                      width: 130,
+                                      margin: EdgeInsets.only(
+                                        left: index == 0 ? 20 : 10,
+                                        right: (index == 10 - 1) ? 20 : 0,
+                                      ),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(8),
+                                        child: Image.memory(
+                                          premiumImage, // Uint8List (base64 decoding) байх ёстой
+                                          fit: BoxFit.cover,
+                                          gaplessPlayback:
+                                              true, // Анивчилтаас сэргийлэх
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                      ).padding(top: 10)
+                    ],
+                  )
+              ]
             ],
           ),
         ),

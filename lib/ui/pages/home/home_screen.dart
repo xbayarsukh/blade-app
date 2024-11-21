@@ -1,6 +1,5 @@
-import 'dart:io';
-
 import 'package:blade/configs/app_database.dart';
+import 'package:blade/configs/globals.dart';
 import 'package:blade/controllers/frame_controller.dart';
 import 'package:blade/ui/pages/home/child/category_child_screen.dart';
 import 'package:blade/ui/pages/home/child/download/download_child_screen.dart';
@@ -23,7 +22,7 @@ class HomeScreen extends StatelessWidget {
     return Obx(
       () => Scaffold(
         backgroundColor: AppTheme.dark,
-        appBar: Platform.isAndroid
+        appBar: (usr?.dDays ?? 0) > 0
             ? (frameController.bottomIndex.value == 0
                 ? AppBar(
                     backgroundColor: AppTheme.dark,
@@ -144,7 +143,7 @@ class HomeScreen extends StatelessWidget {
         body: AnnotatedRegion<SystemUiOverlayStyle>(
           value: SystemUiOverlayStyle.light,
           child: [
-            if (Platform.isAndroid) ...[
+            if ((usr?.dDays ?? 0) > 0) ...[
               const HomeChildScreen(),
               const CategoryChildScreen(),
               const DownloadChildScreen(),
@@ -156,7 +155,7 @@ class HomeScreen extends StatelessWidget {
             ]
           ][frameController.bottomIndex.value],
         ),
-        bottomNavigationBar: Platform.isAndroid
+        bottomNavigationBar: (usr?.dDays ?? 0) > 0
             ? Container(
                 width: MediaQuery.of(context).size.width,
                 height: 80.0,

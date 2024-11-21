@@ -67,8 +67,7 @@ class _SplashScreenState extends State<SplashScreen> {
     }
 
     if (connectionStatus) {
-      if (tkn == "" || tkn == null) {
-      } else {
+      if (tkn != "") {
         LoginResponse response = await AuthRepositories().check();
         if (response.status == 200 && response.success == true) {
           usr = response.user;
@@ -82,7 +81,7 @@ class _SplashScreenState extends State<SplashScreen> {
       } catch (e) {
         _logError('Error initializing notifications', e);
       }
-      await Future.delayed(const Duration(seconds: 1)).then((onValue) {
+      await Future.delayed(const Duration(milliseconds: 250)).then((onValue) {
         Get.offAllNamed("/home");
       });
     } else {

@@ -1,5 +1,7 @@
 import 'package:blade/configs/app_database.dart';
 
+import '../configs/globals.dart';
+
 class ResponseModel {
   final int? status;
   final bool? success;
@@ -16,6 +18,7 @@ class ResponseModel {
   factory ResponseModel.fromJson(Map<String, dynamic> json) {
     if (json["status"] == 205) {
       AppDatabase().deleteData();
+      tkn = "";
     }
     return ResponseModel(
       status: json["status"] ?? 301,

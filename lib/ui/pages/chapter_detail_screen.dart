@@ -1,24 +1,52 @@
 import 'dart:convert';
-import 'dart:typed_data';
-
 import 'package:blade/configs/globals.dart';
 import 'package:blade/configs/theme/theme.dart';
 import 'package:blade/controllers/manga_controller.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:get/get.dart';
+import 'package:no_screenshot/no_screenshot.dart';
 import 'package:styled_widget/styled_widget.dart';
 
-class ChapterDetailScreen extends StatelessWidget {
-  ChapterDetailScreen({required this.id, super.key});
-  int id;
+class ChapterDetailScreen extends StatefulWidget {
+  const ChapterDetailScreen({required this.id, super.key});
+  final int id;
+
+  @override
+  State<ChapterDetailScreen> createState() => _ChapterDetailScreenState();
+}
+
+class _ChapterDetailScreenState extends State<ChapterDetailScreen> {
+  final _noScreenshot = NoScreenshot.instance;
+  void disableScreenshot() async {
+    bool result = await _noScreenshot.screenshotOff();
+    debugPrint('Screenshot Off: $result');
+  }
+
+  void enableScreenshot() async {
+    bool result = await _noScreenshot.screenshotOn();
+    debugPrint('Enable Screenshot: $result');
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    disableScreenshot();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    enableScreenshot();
+  }
 
   @override
   Widget build(BuildContext context) {
     MangaController mangaController = Get.put(MangaController());
 
-    mangaController.fetchChapter(id);
+    mangaController.fetchChapter(widget.id);
 
     return Obx(
       () => Scaffold(

@@ -46,8 +46,8 @@ class HomeChildScreen extends StatelessWidget {
                             child: Container(
                               width: Get.width - 40,
                               height: 60,
-                              margin:
-                                  const EdgeInsets.only(top: 10, left: 20, right: 20),
+                              margin: const EdgeInsets.only(
+                                  top: 10, left: 20, right: 20),
                               padding: const EdgeInsets.symmetric(
                                   vertical: 8, horizontal: 12),
                               decoration: BoxDecoration(

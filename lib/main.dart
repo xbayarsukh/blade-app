@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:blade/configs/firebase_options.dart';
 import 'package:blade/configs/theme/theme.dart';
+// import 'package:blade/socket.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/route_manager.dart';
@@ -11,6 +12,7 @@ import 'configs/route.dart';
 
 void main() async {
   await GetStorage.init();
+  // Socket();
   if (Platform.isIOS) {
     await Permission.notification.isDenied.then((value) {
       if (value) {

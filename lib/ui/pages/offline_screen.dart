@@ -1,11 +1,10 @@
 import 'dart:async';
-import 'dart:io';
-
 import 'package:blade/configs/theme/theme.dart';
 import 'package:blade/ui/pages/home/child/download/download_child_screen.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../configs/globals.dart';
 
 class OfflineScreen extends StatefulWidget {
   const OfflineScreen({super.key});
@@ -47,21 +46,21 @@ class _OfflineScreenState extends State<OfflineScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: Platform.isIOS
-          ? null
-          : AppBar(
+      appBar: (usr?.dDays ?? 0) > 0
+          ? AppBar(
               automaticallyImplyLeading: false,
               backgroundColor: AppTheme.dark,
               title: const Text(
                 "Татсан файл",
                 textAlign: TextAlign.center,
               ),
-            ),
-      body: Platform.isIOS
-          ? const Center(
-              child: Text("Интернет холболтоо шалгана уу."),
             )
-          : const DownloadChildScreen(),
+          : null,
+      body: (usr?.dDays ?? 0) > 0
+          ? const DownloadChildScreen()
+          : const Center(
+              child: Text("Интернет холболтоо шалгана уу."),
+            ),
     );
   }
 }

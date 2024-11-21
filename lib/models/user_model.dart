@@ -9,8 +9,10 @@ class User {
   dynamic membership;
   String? otpCode;
   dynamic expireDate;
+  dynamic download;
   String? deviceId;
   int? isActive;
+  int? dDays;
   int? mDays;
   int? pDays;
   DateTime? createdAt;
@@ -27,8 +29,10 @@ class User {
     this.membership,
     this.otpCode,
     this.expireDate,
+    this.download,
     this.deviceId,
     this.isActive,
+    this.dDays,
     this.mDays,
     this.pDays,
     this.createdAt,
@@ -46,8 +50,10 @@ class User {
     dynamic membership,
     String? otpCode,
     dynamic expireDate,
+    dynamic download,
     String? deviceId,
     int? isActive,
+    int? dDays,
     int? mDays,
     int? pDays,
     DateTime? createdAt,
@@ -64,8 +70,10 @@ class User {
         membership: membership ?? this.membership,
         otpCode: otpCode ?? this.otpCode,
         expireDate: expireDate ?? this.expireDate,
+        download: download ?? this.download,
         deviceId: deviceId ?? this.deviceId,
         isActive: isActive ?? this.isActive,
+        dDays: dDays ?? this.dDays,
         mDays: mDays ?? this.mDays,
         pDays: pDays ?? this.pDays,
         createdAt: createdAt ?? this.createdAt,
@@ -82,6 +90,10 @@ class User {
         DateTime.now().subtract(const Duration(days: 1)).toString());
     Duration differenceM = mDate.difference(now);
     int secondsDifferenceM = differenceM.inDays;
+    DateTime dDate = DateTime.parse(json["download"] ??
+        DateTime.now().subtract(const Duration(days: 1)).toString());
+    Duration differenceD = dDate.difference(now);
+    int secondsDifferenceD = differenceD.inDays;
 
     return User(
       id: json["id"] ?? 0,
@@ -97,8 +109,11 @@ class User {
       otpCode: json["otp_code"] ?? "",
       expireDate: DateTime.parse(json["expire_date"] ??
           DateTime.now().subtract(const Duration(days: 1)).toString()),
+      download: DateTime.parse(json["download"] ??
+          DateTime.now().subtract(const Duration(days: 1)).toString()),
       deviceId: json["device_id"] ?? "",
       isActive: json["is_active"] ?? 0,
+      dDays: secondsDifferenceD,
       mDays: secondsDifferenceM,
       pDays: secondsDifferenceP,
       createdAt: json["created_at"] == null
@@ -121,8 +136,10 @@ class User {
         "membership": membership.toString(),
         "otp_code": otpCode,
         "expire_date": expireDate.toString(),
+        "download": download.toString(),
         "device_id": deviceId,
         "is_active": isActive,
+        "dDays": dDays,
         "mDays": mDays,
         "pDays": pDays,
         "created_at": createdAt?.toString(),

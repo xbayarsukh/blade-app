@@ -47,6 +47,7 @@ class MangaRepositories {
         "Content-Type": "application/json",
         "App-Language": "mn",
         "Accept": "application/json",
+        'Authorization': 'Bearer $tkn',
       },
     );
     return ResponseModel.fromJson(response.body ?? {});
@@ -62,6 +63,7 @@ class MangaRepositories {
         "Content-Type": "application/json",
         "App-Language": "mn",
         "Accept": "application/json",
+        'Authorization': 'Bearer $tkn',
       },
     );
     return ResponseModel.fromJson(response.body ?? {});

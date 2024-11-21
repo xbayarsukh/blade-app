@@ -5,6 +5,7 @@
 import 'dart:convert';
 
 import 'package:blade/configs/app_database.dart';
+import 'package:blade/configs/globals.dart';
 import 'package:blade/models/user_model.dart';
 
 LoginResponse loginResponseFromJson(String str) =>
@@ -44,6 +45,7 @@ class LoginResponse {
   factory LoginResponse.fromJson(Map<String, dynamic> json) {
     if (json["status"] == 205) {
       AppDatabase().deleteData();
+      tkn = "";
     }
     return LoginResponse(
       success: json["success"] ?? false,

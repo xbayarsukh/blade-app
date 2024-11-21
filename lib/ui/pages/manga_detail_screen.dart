@@ -1,7 +1,6 @@
 // ignore_for_file: dead_code
 
 import 'dart:convert';
-import 'dart:io';
 import 'package:blade/configs/app_database.dart';
 import 'package:blade/configs/globals.dart';
 import 'package:blade/configs/theme/theme.dart';
@@ -529,7 +528,9 @@ class _MangaDetailScreenState extends State<MangaDetailScreen> {
                                                         "Нэвтэрсэний дараа унших боломжтой");
                                                     Get.offAllNamed("/home",
                                                         arguments: [
-                                                          Platform.isIOS ? 2 : 3
+                                                          (usr?.dDays ?? 0) > 0
+                                                              ? 3
+                                                              : 2
                                                         ]);
                                                   } else {
                                                     if (mangaController
@@ -573,9 +574,11 @@ class _MangaDetailScreenState extends State<MangaDetailScreen> {
                                                             "Premium эрхээ сунгаж байж унших боломжтой");
                                                         Get.offAllNamed("/home",
                                                             arguments: [
-                                                              Platform.isIOS
-                                                                  ? 2
-                                                                  : 3
+                                                              (usr?.dDays ??
+                                                                          0) >
+                                                                      0
+                                                                  ? 3
+                                                                  : 2
                                                             ]);
                                                       }
                                                     } else {
@@ -613,9 +616,11 @@ class _MangaDetailScreenState extends State<MangaDetailScreen> {
                                                             "Эрхээ сунгаж байж унших боломжтой");
                                                         Get.offAllNamed("/home",
                                                             arguments: [
-                                                              Platform.isIOS
-                                                                  ? 2
-                                                                  : 3
+                                                              (usr?.dDays ??
+                                                                          0) >
+                                                                      0
+                                                                  ? 3
+                                                                  : 2
                                                             ]);
                                                       }
                                                     }
@@ -671,8 +676,9 @@ class _MangaDetailScreenState extends State<MangaDetailScreen> {
                                                                         false &&
                                                                     AppDatabase()
                                                                         .isLoggedIn() &&
-                                                                    Platform
-                                                                        .isAndroid) &&
+                                                                    (usr?.dDays ??
+                                                                            0) >
+                                                                        0) &&
                                                                 (usr?.mDays ??
                                                                         0) >
                                                                     0) ...[

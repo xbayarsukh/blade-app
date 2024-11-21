@@ -176,12 +176,15 @@ class MangaController extends GetxController {
             setIsDownloading(index, false);
           },
         );
+      } else {
+        Get.snackbar("Алдаа", response.message ?? "");
+        Get.offAllNamed("/home", arguments: [0]);
       }
 
       isDownloading.value = false; // Reset the flag after download completes
     } else {
       Get.snackbar("Алдаа", "Эрхээ сунгаж байж татах боломжтой");
-      Get.offAllNamed("/home", arguments: [3]);
+      Get.offAllNamed("/home", arguments: [2]);
     }
   }
 
